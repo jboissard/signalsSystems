@@ -1,0 +1,674 @@
+%
+%  untitled
+%
+%  Created by Johan Boissard [] on 2009-10-09.
+%  Copyright (c) Johan Boissard. All rights reserved.
+% hhh
+\documentclass[a4paper]{amsart}
+
+% Packages
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amsfonts, tikz, fancyhdr, wrapfig}
+\usepackage{fullpage}
+\usepackage{comment}
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+
+\usetikzlibrary{shapes,arrows}
+
+% Title
+\title{}
+\author{Johan Boissard}
+\date\today
+
+% Header
+\setlength{\headheight}{15.2pt}
+\setlength{\headsep}{15pt}
+\pagestyle{fancy}
+
+\fancyhf{}
+\lhead{}
+\chead{}
+%\rhead{Johan Boissard}
+
+\newtheorem{myTheorem}{Theorem}
+\newtheorem{myExample}{Example}
+
+\begin{document}
+	
+%	\twocolumn
+%\begin{comment}
+	
+
+\part{Signaux analogiques}
+\section{Size of a signal}
+
+\subsection{Signal Energy}
+\begin{eqnarray}
+	E_f=\int_{-\infty}^{\infty}|f^2(t)|dt
+\end{eqnarray}
+
+\subsection{Signal Power}
+\begin{eqnarray}
+	P_f=\lim_{T\rightarrow\infty}\frac{1}{T}\int_{-T/2}^{T/2}|f^2(t)|dt	
+\end{eqnarray}
+\begin{comment}
+	
+
+\section{Some useful signals}
+\subsection{Unit Step Function $u(t)$}
+\begin{eqnarray}
+	u(t)=
+	\begin{cases}
+		1 & \mbox{if }\geq0 \\
+		0 & \mbox{else }
+	\end{cases}
+\end{eqnarray}
+%Permet de rendre un signal causal.
+\subsection{Unit Impulse Function $\delta(t)$}
+\begin{eqnarray}
+	\delta(t)=
+	\begin{cases}
+		1 & \mbox{if }t=0 \\
+		0 & \mbox{else }
+	\end{cases}
+\end{eqnarray}
+
+%\begin{eqnarray}
+%	\int_{-\infty}^{\infty}\delta(t)dt=1
+%	\\
+%	\int_{-\infty}^{t}\delta(t)dt=u(t)
+%\end{eqnarray}
+
+\subsection{Exponential Function}
+\begin{eqnarray}
+	e^{st}=e^{(\sigma+j\omega)t}=e^{\omega t}(\cos{(\omega t)}+\sin{(\omega t)})
+\end{eqnarray}
+
+\begin{itemize}
+	\item $s=0: e^{0t}=1$: constant
+	\item $s=\sigma\in\mathbb R: e^{\sigma t}$: monotonic exponential
+	\item $s=j\omega: e^{j\omega t}$: pure sinusoid
+	\item $s=\sigma + j\omega: e^{(\sigma+j\omega)t}$: vorging sinusoid
+\end{itemize}
+
+\subsection{Dilatation et translations de signaux}
+\begin{itemize}
+	\item Décalage: $f(t-t_0)$ est équivalent à $f(t)$ décalé de $t_0$ vers la \textbf{droite}, le signal est en \textbf{retard}.
+	\item Dilatation: $f(at)$, le signal $f(t)$ est dilaté (shrinked) de $a$, si $a>0$ sinon le signal est "expanded".
+	\item Amplitude: $af(t)$.
+\end{itemize}
+Résumé: $af(b(t-t_0))$, est équivalent au signal $f(t)$ décalé de $t_0$ (vers la droite), dilaté de $b$, et avec amplitude modulée de $a$.
+
+
+\section{Convolution}
+\begin{eqnarray}
+	(f*g)(t)\stackrel{\mathrm{def}}{=}\ \int_{-\infty}^{\infty} f(\tau)\, g(t - \tau)\, d\tau
+\end{eqnarray}
+\begin{comment}
+	
+
+\subsection{Propriétés de la convolution}
+\begin{itemize}
+	\item Commutativité
+	\begin{eqnarray}
+		(f*g)(t)=(g*f)(t)
+	\end{eqnarray}
+	\item Distributivité
+	\begin{eqnarray}
+		(af(t)+bg(t))*h(t)=a(f*h)(t)+b(g*h)(t)
+	\end{eqnarray}
+	\item Associativité
+	\begin{eqnarray}
+		(f*g)*h=f*(g*h)
+	\end{eqnarray}
+\end{itemize}
+\end{comment}
+\section{Systèmes LIT}
+LIT: Linéaire, invariant dans le temps
+\\Linéaire, invariant par translation
+
+
+
+\subsection{Notation opérateur}
+\begin{eqnarray}
+	y(t)=S_a\{x(t)\}\equiv y=S_a\{x\}
+\end{eqnarray}
+
+\subsection{Caractérisation d'un système LIT}
+\textbf{Réponse impulsionelle:} $h(t)=S_a\{\delta(t)\}$
+
+Système LIT: $h(t,\tau)=h(t-\tau)$
+\begin{eqnarray}
+	y(t)=(h*x)(t)
+\end{eqnarray}
+% The block diagram code is probably more verbose than necessary
+\begin{figure}
+	\begin{center}
+		\tikzstyle{block} = [draw, fill=blue!20, rectangle, minimum height=3em, minimum width=6em]
+		\tikzstyle{sum} = [draw, fill=blue!20, circle, node distance=1cm]
+		\tikzstyle{input} = [coordinate]
+		\tikzstyle{output} = [coordinate]
+		\tikzstyle{pinstyle} = [pin edge={to-,thin,black}]	
+		\begin{tikzpicture}[auto, node distance=3cm,>=latex']
+			\node [input, name=input] {};
+			\node [block, right of=input] (controller) {$H(j\omega)$};
+			\node [input, right of=controller] (system){};
+			\draw [->] (controller) -- node[name=u] {$Y(j\omega)$} (system);
+			\draw [draw,->] (input) -- node {$X(j\omega)$} (controller);
+		\end{tikzpicture}
+	\end{center}
+	\caption{Typical representation of a system where $Y(j\omega)=H(j\omega)X(j\omega)$}
+\end{figure}
+\subsection{Exemples}
+\begin{itemize}
+	\item Amplificateur
+	\begin{eqnarray}
+		a\cdot I\{f(t)\}=a\cdot f(t)\Rightarrow h(t)=a\cdot I\{\delta(t)\}=a\delta(t)
+	\end{eqnarray}
+	\item Retard
+	\begin{eqnarray}
+		S_{t_0}\{f(t)\}=f(t-t_0)\Rightarrow h(t)=S_{t_0}\{\delta(t)\}=\delta(t-t_0)
+	\end{eqnarray}
+	\item Dérivateur
+	\begin{eqnarray}
+		D\{f(t)\}=\frac{d}{dt}f(t)=f'(t)\Rightarrow h(t)=\frac{d}{dt}\delta(t)=\delta'(t)
+	\end{eqnarray}
+	\item Intégrateur
+	\begin{eqnarray}
+		D^{-1}\{f(t)\}=\int_{-\infty}^t f(\tau)d\tau=F(t)\Rightarrow h(t)=\int_{-\infty}^t\delta(\tau)d\tau=u(t)
+	\end{eqnarray}
+\end{itemize}
+
+\section{Systèmes régis par des équations différentielles}
+Un système LIT peut être décrit par des équations différentielles, et en utilisant la notation "opérateur" écrit comme suit
+\begin{eqnarray}
+	\frac{d}{dt^n}y(t)+a_{n-1}\frac{d}{dt^{n-1}}y(t)+\dots+a_1\frac{d}{dt}y(t)+a_0y(t)=
+	b_m\frac{d}{dt^m}x(t)+\dots+b_1\frac{d}{dt}x(t)+b_0x(t)
+\end{eqnarray}
+\begin{eqnarray}
+	D^n\{y(t)\}+a_{n-1}D^{n-1}\{y(t)\}+\dots+a_1D\{y(t)\}+a_0y(t)=
+	b_mD^m\{x(t)\}+\dots+b_1D\{x(t)\}+b_0x(t)
+\end{eqnarray}
+\begin{eqnarray}
+	Q(D)\{y(t)\}=P(D)\{x(t)\}
+\end{eqnarray}
+$x(t)$: input\\
+$y(t)$: output\\
+Contraintes physiques: $n\geq m$
+Polynôme caractéristique:
+\begin{eqnarray}
+	Q(s)=s^n+a_{n-1}s^{n-1}+\dots+a_1s+a_0=\Pi_{i=1}^{n}(s-s_i)
+\end{eqnarray}
+Solution générale:
+\begin{eqnarray}
+	y_0(t)=\sum_{i=1}^nc_ie^{s_it}
+\end{eqnarray}
+\subsection{Fonction de Green}
+La fonction de Green est
+\begin{eqnarray}
+	\varphi(t)=Q^{-1}(D)\{\delta(t)\}
+\end{eqnarray}
+de là on obtient l'égalité suivante
+\begin{eqnarray}
+	h(t)=P(D)\{Q^{-1}(D)\{\delta(t)\}\}=P(D)\{\varphi(t)\}
+\end{eqnarray}
+
+\subsection{Résolution d'équation différentielle}
+\begin{enumerate}
+	\item Solution de l’équation homogène : combinaison linéaire de modes propres: $y_0(t)=\sum_{i=1}^nc_ie^{s_it}$
+	\item Solution particulière : on convolue la réponse impulsionnelle du système: $h(t)*x(t)$
+	\item Solution de l’équation : $y(t)=\sum_{i=1}^nc_ie^{s_it}+h(t)*x(t)$ où les $c_i$ peuvent être déterminés à l'aide des conditions initiales.
+\end{enumerate}
+\subsection{Stabilité BIBO}
+\begin{eqnarray}
+	|x(t)|\leq M_x<+\infty \Rightarrow |y(t)|\leq M_y<+\infty
+\end{eqnarray}
+Un système est stable BIBO si, et seulement si
+\begin{eqnarray}
+	\int_{-\infty}^{\infty}|h(\tau)|d\tau<+\infty
+\end{eqnarray}
+Tous les racines dans le demi-plan gauche. (pôlé à gauche)
+
+\subsection{Resonance}
+
+\section{Vecteurs et signaux}
+Energie d'un signal est "équivalente" à une norme
+
+Espace vectoriel des signaux:
+\begin{eqnarray}
+	L_2([t_1,t_2])=\left\{f(t):t\in[t_1,t_2]  \& \int_{t_1}^{t_2}|f^2(t)|dt<+\infty\right\}
+\end{eqnarray}
+
+\subsection{Produit scalaire}
+\begin{eqnarray}
+	<f,g>=\frac{1}{T}\int_0^T f(t)g*(t)dt
+\end{eqnarray}
+Meilleure approximation de $f(t)$ par $\phi(t)$.
+
+Erreur quadratique:
+\begin{eqnarray}
+	||e(t)||_{L_2}^2=<e,e>=\int_{t_1}^{t_2} (f(t)-c\phi(t))^2dt=<f,f>+c^2<\phi,\phi>-2c<f,\phi>
+\end{eqnarray}
+Minimisation:
+\begin{eqnarray}
+	\frac{\partial <e,e>}{\partial c}=0 \Rightarrow \hat c=\frac{<f,\phi>}{<\phi,\phi>}
+\end{eqnarray}
+\subsection{Théorème de Pythagore}
+\begin{eqnarray}
+	||x||^2=||x-g||^2+||g||^2
+\end{eqnarray}
+\subsection{Approximation moindres carrés}
+\begin{eqnarray}
+	x_n=\sum_{i=1}^n<x,\phi_i>\phi_i
+\end{eqnarray}
+\subsection{Corrélation et similarité}
+Intercorrélation:
+\begin{eqnarray}
+	c_{xy}(t)=(x(-\cdot)*y^*(\cdot))(t)
+\end{eqnarray}
+
+\section{Série de Fourier}
+Pulsion fondamentale: $\omega_0=\frac{2\pi}{T}$
+\begin{eqnarray}
+	x(t)=\sum_{n\in\mathbb Z}c_ne^{jn\omega t} & c_n=<x,\phi_n>=\frac{1}{T}\int_{-T/2}^{T/2}x(t)e^{-jn\omega t}dt
+\end{eqnarray}
+
+Parseval
+\begin{eqnarray}
+	||x^2||=\frac{1}{T}\int_{-T/2}^{T/2}|x^2(t)|dt=\sum_{n\in\mathbb Z}|c_n|^2
+\end{eqnarray}
+
+\section{Fourier Transform}
+Notation: $w_n=n\frac{2\pi}{T_0}$
+\begin{eqnarray}
+	X(\omega)=\int_{-\infty}^{\infty}x(t)e^{-j\omega t}dt=\mathcal{F}\{x\}(\omega)\in\mathbb C\\
+	x(t)=\int_{-\infty}^{\infty}x(t)e^{-j\omega t}dt=\mathcal{F}^{-1}\{x\}(t)
+\end{eqnarray}
+
+\begin{eqnarray}
+	X(\omega)|_{\omega=0}=X(0)=\int_{-\infty}^{\infty}x(t)dt
+\end{eqnarray}
+Coefficients de la série de Fourier:
+\begin{eqnarray}
+	c_n=\frac{2\pi}{\omega_0}X_g(\omega)\big|_{\omega=n\omega_0}
+\end{eqnarray}
+
+\begin{comment}
+	
+
+\section{Décomposition en fractions simples}
+On a le théorème suivant:
+\begin{myTheorem}
+	Toute fraction rationelle peut se décomposer de manière unique comme une somme de fractions simples à coefficients complexes et d'un polynôme:
+	\begin{eqnarray}
+		F(X)=\frac{P(X)}{Q(X)}=\sum_{i=1}^{n}\sum_{j=1}^{m_i}\frac{a_{i,j}}{(X-X_i)^j}+R(X)
+	\end{eqnarray}
+	où l'on a défini ($N=\mathop{Deg}(P)$, $M=\mathop{Deg}(Q)$):
+	\begin{itemize}
+		\item $X_i$ sont les racines distinctes du dénominateur $Q(X)$
+		\item $m_i$ sont les multiplicités de chaque racine $X_i$
+		\item $R(X)$ est un polynôme de degré $N-M$ si $N\geq M$ et sinon $R(X)=0$.
+	\end{itemize}
+\end{myTheorem}
+Marche à suivre:
+\begin{enumerate}
+	\item Si $\mathop{Deg}(P)\geq\mathop{Deg}(Q)$, on effectue une division euclidienne afin de se ramener à la forme
+	\begin{eqnarray}
+		F(X)=\frac{P(X)}{Q(X)}=R(X)+\frac{S(X)}{Q(X)}
+	\end{eqnarray}
+	\item Poser
+	\begin{eqnarray}
+		\frac{S(X)}{Q(X)}=\sum_{i=1}^{n}\sum_{j=1}^{m_i}\frac{a_{i,j}}{(X-X_i)^j}
+	\end{eqnarray}
+	\item Mettre au même dénominateur
+	\begin{eqnarray*}
+		S(X)=Q(X)\sum_{i=1}^{n}\sum_{j=1}^{m_i}\frac{a_{i,j}}{(X-X_i)^j}
+	\end{eqnarray*}
+	\item Résoudre pour trouver les $a_{i,j}$, puis réécrire l'équation avec les coefficients trouvés.
+\end{enumerate}
+
+\begin{myExample}
+	Décomposer en éléments simples
+	\begin{eqnarray*}
+		H(X)=\frac{X^3+1}{(X-1)^2(X+2)}
+	\end{eqnarray*}
+	
+	\begin{itemize}
+		\item Après la division euclidienne on trouve
+		\begin{eqnarray*}
+			H(X)=\overbrace{1}^{R(X)}+\frac{\overbrace{3X-1}^{S(X)}}{\underbrace{(X-1)^2(X+2)}_{Q(X)}}
+		\end{eqnarray*}
+	\item On pose
+	\begin{eqnarray*}
+		\frac{3X-1}{(X-1)^2(X+2)}=\frac{A}{(X-1)^2}+\frac{B}{(X-1)}+\frac{C}{(X+2)}
+		&\Bigg| \cdot (X-1)^2(X+2)\\
+		\Rightarrow\\
+		3X-1=A(X+2)+B(X-1)(X+2)+C(X-1)^2
+	\end{eqnarray*}
+	\item Après résolution on trouve
+	\begin{eqnarray*}
+		\begin{cases}
+			A=\frac{2}{3}
+			\\
+			B=\frac{7}{9}\\
+			C=-\frac{7}{9}
+		\end{cases}
+	\end{eqnarray*}
+	et donc
+	\begin{eqnarray*}
+		H(X)=\frac{X^3+1}{(X-1)^2(X+2)}=1+\frac{2}{3}\frac{1}{(X-1)^2}+\frac{7}{9}\frac{1}{(X-1)}-\frac{7}{9}\frac{1}{(X+2)}
+	\end{eqnarray*}
+	\end{itemize}
+	Si $H$ était une réponse impulsionelle dans le domaine fréquentiel, on peut trouver la réponse dans le domaine temporel en appliquant la transformée de Fourier inverse.
+	\begin{eqnarray*}
+		h(t)=
+		\mathcal F^{-1}\{H(j\omega)\}(t)=
+		\delta(t)
+		+u(t)\left[\frac{7}{9}e^{t}-\frac{7}{9}e^{-2t}+\frac{2}{3}\frac{t}{2}e^{t}\right].
+	\end{eqnarray*}
+\end{myExample}
+\end{comment}
+\begin{eqnarray}
+	sinc(x)=\frac{sin(\pi x)}{\pi x}
+\end{eqnarray}
+
+\subsection{$\beta$-spline}
+\begin{eqnarray}
+	\beta^0(t)=\mathrm{rect}(t)\\
+	\beta^n(t)=(\beta^{n-1}*\beta^0)\\
+	\beta^n(t)\xrightarrow{\mathcal{F}}\mathrm{sinc}(\frac{\omega}{2\pi})^{n+1}
+\end{eqnarray}
+
+
+\subsection{Relation de Parseval}
+\begin{eqnarray}
+	<f(x),g^*(x)>=\frac{1}{2\pi}<F(\omega),G^*(\omega)>=\sum_{k\in\mathbb{Z}}c_kd_k^*
+\end{eqnarray}
+\section{Echantillonnage}
+\begin{eqnarray}
+	x_e(t)=x(t)\sum_{n\in\mathbb Z}\delta(t-nT_e)=\sum_{n\in\mathbb Z}x(nT_e)\delta(t-nT_e)\\
+	X_e(\omega)=\int_{-\infty}^{\infty}\sum_{n\in\mathbb Z}x(nT_e)\delta(t-nT_e)e^{j\omega t}dt=\sum_{n\in\mathbb Z}x(nT_e)e^{-j\omega nT_e}=\frac{1}{T_e}\sum_{n\in\mathbb Z}\delta(\omega-n\frac{2\pi}{T})
+\end{eqnarray}
+\subsection{Formule de Poisson}
+\begin{eqnarray}
+	\sum_{k\in\mathbb Z}f(t)=\sum_{n\in\mathbb Z}F(2\pi n)&\sum_{n\in\mathbb Z}\delta(t+kT)=\frac{1}{T}\sum_{n\in\mathbb Z}e^{jn\omega_0t}
+\end{eqnarray}
+\begin{myTheorem}{Théorème d'échantillonnage - Shannon}
+	x(t) avec $\omega_{max}$ peut-être parfaitement retrouvée si
+	\begin{eqnarray}
+		\omega_e\geq2\omega_{max}
+	\end{eqnarray}
+	NB en pratique le signal est filtré pour avoir une largeur de bande $B$, bien définie.
+\end{myTheorem}
+\subsection{Formule de reconstruction de Shannon}
+Reconstruction par filtrage idéal
+\begin{eqnarray}
+	h(t)=\mathrm{sinc}(\frac{t}{T_e})=\mathcal{F}^{-1}\left\{T_e\mathrm{rect}\left(\frac{\omega}{2\pi/T_e}\right)\right\}
+\end{eqnarray}
+\section{Applications aux communications}
+\subsection{Largeur de bande essentielle}
+\begin{eqnarray}
+	B_{ess}=\frac{1}{2\pi}\int_{-B}^B|X(\omega)|^2d\omega=\alpha\cdot E_{tot}&\alpha=0.95
+\end{eqnarray}
+\subsection{Modulation d'amplitude (AM)}
+\begin{eqnarray}
+	x_{AM}(t)=x(t)A_p\cos{\omega_p t}=x(t)p(t)\xrightarrow{\mathcal{F}}\frac{1}{2\pi}X(\omega)*P(\omega)
+\end{eqnarray}
+\subsection{Demodulation synchrone}
+multiplier $x_{AM}$ avec $p'(t)=2\cos{\omega_p t}=1+\cos{2\omega_pt}$, puis filtre passe-bas.
+
+\section{Analyse et synthèse des filtres analogiques}
+\subsection{Filtre passe-tout}
+\begin{eqnarray}
+	s_{0k}=-s_{pk}^*\\
+	H(\omega)=\frac{j\omega-d}{j\omega+d}
+\end{eqnarray}
+\newpage
+%\end{comment}
+
+
+\part{Signaux numériques}
+\section{Signaux et systèmes discrets}
+\subsection{Signaux types}
+\subsubsection{Impulsion discrète}
+\begin{eqnarray}
+	\delta[n]=\begin{cases}
+		1 & n=0\\
+		0 & sinon
+	\end{cases}
+\end{eqnarray}
+
+\subsubsection{Saut unité discret}
+\begin{eqnarray}
+	\delta[n]=\begin{cases}
+		1 & n\geq0\\
+		0 & sinon
+	\end{cases}
+\end{eqnarray}
+\subsubsection{Polynôme causal discret discret}
+\begin{eqnarray}
+	S_+^N[n]=\begin{cases}
+		\frac{(n+1)(n+2)\dots(n+N)}{N!} & n\geq0\\
+		0 & sinon
+	\end{cases}
+\end{eqnarray}
+
+\subsubsection{Fonction exponentielle causale discrète}
+\begin{eqnarray}
+	a_+[n]=a^n\cdot u[n]
+\end{eqnarray}
+\subsubsection{Signaux périodiques}
+\begin{eqnarray}
+	f[n+N]=f[n]&\forall n
+\end{eqnarray}
+
+\subsubsection{Représentation canonique}
+\begin{eqnarray}
+	f[n]=\sum_{k\in\mathbb Z}f[k]\delta[k-n]
+\end{eqnarray}
+\subsection{Quelques Opérateurs}
+\begin{enumerate}
+	\item Décalage: $f[n]\rightarrow Zf[n]=f[n-1]$
+	\item Sous-échantillonage: $f[n]\rightarrow (M\downarrow)f[n]=f[Mn]$
+	\item Sur-échantillonage: $f[n]\rightarrow (M\uparrow)f[n]=f[n/M]$
+\end{enumerate}
+
+\subsection{Systèmes linéaires discrets}
+\subsubsection{Convolution discrète}
+\begin{eqnarray}
+	(f*g)[n]=\sum_{k\in\mathbb Z}f[n-k]g[k]
+\end{eqnarray}
+
+\subsubsection{FIR - Finite Impulse Response}
+\begin{eqnarray}
+	\forall n \notin [n_0,n_1],&h[n]=0
+\end{eqnarray}
+ou 
+\begin{eqnarray}
+	H(z)=z^{-n_0}P(z^{-1}) &\text{où $P(X)$ est un polynôme}
+\end{eqnarray}
+\subsubsection{BIBO - Bounded Input Bounded Output}
+\begin{eqnarray}
+	\sum_{k\in\mathbb Z}|h[n]|<+\infty
+\end{eqnarray}
+\subsection{Transformée en Z}
+\begin{eqnarray}
+	H(z)=\sum_{n\in\mathbb Z}f[n]z^{-n}
+\end{eqnarray}
+\subsubsection{Relation avec Taylor}
+\begin{eqnarray}
+	f[n+n_0]=\frac{1}{n!}\cdot\frac{d^n}{dz^n}\left(z^{-n_0}F(z^{-1})\right)\big|_{z=0}
+\end{eqnarray}
+Suite géométrique
+\begin{eqnarray}
+	\sum_{i=0}^{N-1}q^i=\frac{1-q^n}{1-q}\\
+	\sum_{i=0}^{\infty}q^i=\frac{1}{1-q}	& |q|<1
+\end{eqnarray}
+\section{Analyse temporelle des signaux discrets}
+\subsubsection{Pôles et zéros}
+\begin{enumerate}
+	\item $z_0$ est un \textbf{Zéro} $\Leftarrow H(z_0)=0$, \textbf{zéro multiple d'ordre N} $\Leftrightarrow \frac{d^nH}{dz^n}(z_0)=0$ pour $n=0,1,\dots,N-1$\\
+	\item $z_0$ est un \textbf{Pôle} $\Leftarrow \frac{1}{H(z_0)}=0$, \textbf{pôle multiple d'ordre N} $\Leftrightarrow \frac{d^n(1/H)}{dz^n}(z_0)=0$ pour $n=0,1,\dots,N-1$\\
+\end{enumerate}
+\subsubsection{Causalité et stabilité}
+\begin{enumerate}
+	\item Causal ssi la zone de convergence est à l'extérieur des pôles
+	\item Anti-causal ssi la zone de convergence est à l'intérieur des pôles
+	\item Stable ssi le cercle unité est inclus dans la zone de convergence
+\end{enumerate}
+\subsubsection{Filtres réels}
+\begin{eqnarray}
+	H(z)^*=H(z^*)
+\end{eqnarray}
+\subsection{Equations aux différences}
+Forme générale:
+\begin{eqnarray}
+	(a*g)[n]=(b*f)[n]
+\end{eqnarray}
+où $f$ est l'input, $g$ l'output.
+\subsubsection{Polynôme caractéristique}
+\begin{eqnarray}
+	A(z)=a_Nz^{-N}+a_{N-1}z^{-N+1}+\dots+a_0=a_0\prod_{k=1}^N(1-r_kz^{-1})
+\end{eqnarray}
+où $r_k$ sont les racines du polynômes caractéristiques.
+\subsubsection{Solution générale de l'équation homogène $g$}
+\begin{eqnarray}
+	g_{\text{homogène}}[n]=\sum_{k=1}^Nc_kr_k^n
+\end{eqnarray}
+où $c_k$ sont des constantes à déterminer par des conditions.
+\subsubsection{Fonction de Green $\gamma$}
+\begin{eqnarray}
+	(a*\gamma)[n]=\delta[n]\\
+	\gamma[n]=\frac{1}{a_0}\big((r_1)_+*(r_2)_+\dots(r_N)_+*\big)[n]
+\end{eqnarray}
+\subsubsection{Fonction de transfert $h[n]$}
+\begin{eqnarray}
+	y[n]=(h*x)[n]\\
+	h[n]=(\gamma*b)[n]
+\end{eqnarray}
+\subsubsection{Solution générale}
+\begin{eqnarray}
+	g[n]=\underbrace{(h*f)[n]}_{g_{\text{homogène}}[n]}+\underbrace{\sum_{k=1}^Nc_kr_k^n}_{g_{\text{particulière}}[n]}
+\end{eqnarray}
+\subsubsection{Résolution par la transfornée en Z, $H(z)$}
+\begin{enumerate}
+	\item $H(z)=\frac{B(z)}{A(z)}$
+	\item Décomposition en fractions simples
+	\item A l'aide des tables, transformée inverse
+\end{enumerate}
+
+%chap 10
+\section{Fourier discret}
+\subsection{DTFT}
+\begin{eqnarray}
+	F(e^{j\omega})=\sum_n f[n]e^{-jn\omega} & \omega \in [-\pi,\pi]
+\end{eqnarray}
+\subsubsection{Lien avec Fourier continu}
+\begin{eqnarray}
+	\hat f(\omega)=F(e^{j\omega T})\cdot rect(\frac{\omega T}{2\pi})
+\end{eqnarray}
+
+\subsection{DFT}
+\begin{eqnarray}
+	F[n]=\sum_{k=0}^{N-1}f[k]e^{-j2\pi\frac{kn}{N}}
+\end{eqnarray}
+\begin{eqnarray}
+	F[n]=F^*[-n] & f[n]\in\mathbb R
+	\\
+	F[n]=F[n+N]& \text{périodicité}
+\end{eqnarray}
+\subsubsection{Lien avec DTFT}
+\begin{eqnarray}
+	F_N[n]=F(e^{j\frac{2n\pi}{N}})&f_N[n]=\sum_kf[n+kN]
+\end{eqnarray}
+
+\section{Analyse fréquentielle des systèmes discrets}
+\subsection{Réponse fréquentielle}
+\begin{eqnarray}
+	e^{j\omega n}*h[n]=e^{j\omega n}\cdot H(e^{j\omega})
+\end{eqnarray}
+
+\subsection{Distorsions}
+\begin{eqnarray}
+	\mathop{Att}_H(\omega)=20\log_10\left(\frac{A_H(\omega)}{A_H(\omega_c)}\right) [dB]
+\end{eqnarray}
+\begin{eqnarray}
+	\mathop{TPG}_H(\omega)=
+	-\Im{\left\{\frac{d}{d\omega}\ln{\left(H(e^{j\omega})\right)}\right\}}=
+	-\Re{\left\{e^{j\omega}\frac{H'(e^{j\omega})}{H(e^{j\omega})}\right\}}\\
+	\mathop{TPG}_{h_1*h_2}=\mathop{TPG}_{h_1}+\mathop{TPG}_{h_2}
+\end{eqnarray}
+
+\subsubsection{Phase linéaire}
+Les filtres à phase linéaire sont soit symétriques ($\epsilon=1$) soit antisymétriques ($\epsilon=-1$).
+\begin{eqnarray}
+	H=\epsilon z^{-n}H(z^{-1})
+\end{eqnarray}
+\subsubsection{Transformation bilinéaire}
+\begin{eqnarray}
+	H_{\text{bilinéaire}}(e^{j\omega})
+	=\hat h\left(\frac{2}{jT}\frac{1-e^{-j\omega}}{1+e^{j\omega}}\right)
+	&\text{où $\hat h$ est une fraction rationelle et BIBO}
+\end{eqnarray}
+
+
+\subsection{Générale}
+\begin{eqnarray}
+	h[n]=\frac{T}{2\pi}\int_{-\pi/T}^{\pi/T}\hat h(\omega)e^{jnT\omega}d\omega
+\end{eqnarray}
+\subsection{Filtres passe-tout}
+\begin{eqnarray}
+	H(z)=\gamma z^N\frac{P(z)}{P^*(z^-1)}
+\end{eqnarray}
+\section{Propriétés statistiques des signaux}
+\subsection{Probabilités}
+\subsubsection{Variables aléatoires}
+\begin{eqnarray}
+	\mathcal{E}(f(x))=<f(x),p(x)>=\int f(x)p(x)dx\\
+	P(x\leq x_0)=\mathcal{E}(u(x_0-x))=(p*u)(x_0)=\int_{-\infty}^{0}p(x)dx\\
+	p(a)=\mathcal{E}(\delta(x-a))
+\end{eqnarray}
+\subsubsection{Fonction caractéristique}
+\begin{eqnarray}
+	P(\omega)=\mathcal{E}\left\{e^{-j\omega x}\right\}=\mathfrak{F}(p(x))(\omega)
+\end{eqnarray}
+\begin{eqnarray}
+	p(y)=(p_1*p_2*\dots*p_N)(y)\Leftarrow y = \sum_k^N x_k
+\end{eqnarray}
+\begin{eqnarray}
+	\mu_n=\mathcal{E}(x^n)=j^n\frac{d^nP(\omega)}{d\omega^n}\bigg|_{\omega=0}
+\end{eqnarray}
+
+\subsection{Processus aléatoires}
+\subsubsection{Stationnarité}
+\begin{eqnarray}
+	\text{Stationnaire sens large (SSL ou WSS)}
+	\Leftrightarrow
+	\begin{cases}
+		\mathcal{E}(x(t))=0\\
+		\mathcal{E}(x(t)x^*(t'))=s_x(t-t')		
+	\end{cases}
+\end{eqnarray}
+
+\subsubsection{Ergodicité}
+"moyenne verticale (différents essais) équivaut à la moyenne horizontale (par rapport à $t$)". \\
+Ergodicité $\Rightarrow$ Stationarité
+
+\subsubsection{Densité spectrale de puissance (DSP)}
+\begin{eqnarray}
+	S_x(\omega)=\lim_{A\rightarrow\infty}\frac{1}{A}\mathcal{E}\{|X_A(\omega)|^2\}
+\end{eqnarray}
+
+\subsubsection{Thérorème de Wiener-Khintchine}
+\begin{eqnarray}
+	S_x(\omega)=\mathfrak{F}\{p_x(t)\}(\omega)
+\end{eqnarray}
+
+\subsubsection{DSP d'un signal filtré}
+\begin{eqnarray}
+	S_y(\omega)=|H(\omega)|^2S_x(\omega)
+\end{eqnarray}
+
+\end{document}

@@ -1,0 +1,112 @@
+%
+%  untitled
+%
+%  Created by Johan Boissard [] on 2010-02-14.
+%  Copyright (c) Johan Boissard. All rights reserved.
+% hhh
+\documentclass[a4paper]{article}
+
+
+% Packages
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath,amssymb}
+%allows to write on whole page
+\usepackage{fullpage}
+
+
+%package for page numbering and footer
+\usepackage{fancyhdr}
+%to get last page
+\usepackage{lastpage} % \pageref{LastPage}
+%allows inclusion of graphics
+\usepackage{graphics}
+\DeclareGraphicsExtensions{.pdf, .jpeg,.jpg}
+%allows drawing
+%ref:http://www.texample.net/
+\usepackage{tikz}
+
+%allows inclusion of url (hyperref is better than url) 
+%ref: http://www.fauskes.net/nb/latextips/
+\usepackage{hyperref}
+
+%package for chemistry ie: \ce{(NH4)2SO4 -> NH4+ + 2SO4^2-} 
+%ref:www.ctan.org/tex-archive/macros/latex/contrib/mhchem/mhchem.pdf
+\usepackage[version=3]{mhchem}
+
+%comments (begin{comment})
+\usepackage{comment}
+
+% Title
+\title{Dirac}
+\author{Johan Boissard}
+\date\today
+
+% Header
+
+
+\pagestyle{fancy}
+%delete current header & footer configuration
+\fancyhf{} 
+\fancyhead[EL]{Titel} %Kopfzeile links
+%\fancyhead[C]{} %zentrierte Kopfzeile
+%\fancyhead[LE,RO]{Name} %Kopfzeile rechts
+%head separation line 
+%\renewcommand{\headrulewidth}{0.4pt} 
+%foot separation line
+%\renewcommand{\footrulewidth}{0.4pt}
+%page number
+\fancyfoot[OL]{\thepage\ of \pageref{LastPage}}
+%\fancyfoot[ER]{\thepage}
+
+\begin{document}
+\maketitle
+\section{Fonction de Dirac}
+\subsection{Propriétés}
+\begin{eqnarray}
+	\delta(t)=
+	\begin{cases}
+		\infty&t=0\\
+		0&t\neq0
+	\end{cases}
+	\\
+	\int_{-\infty}^{\infty}\delta(t)dt=1
+\end{eqnarray}
+
+\subsubsection{Transformée de Fourier}
+\begin{eqnarray}
+	\mathcal{F}\{\delta(t)\}(\omega)=1
+	\\
+	\mathcal{F}^{-1}\{\delta(t)\}(\omega)=2\pi
+\end{eqnarray}
+
+\subsubsection{Convolution et produit scalaire}
+\begin{eqnarray}
+	<f,\delta>=\int_{-\infty}^{\infty}f(x)\delta(x)dx=f(0)\int_{-\infty}^{\infty}\delta(x)dx= f(0)
+	\\
+	(f*\delta)(t)=f(t)
+\end{eqnarray}
+\section{Delta de Kronecker}
+Equivalent en discret de la fonction de Dirac
+\begin{eqnarray}
+	\delta_{i,j}=
+	\begin{cases}
+		1&i=j\\
+		0&i\neq j
+	\end{cases}
+\end{eqnarray}
+Souvent utilisé de la façon suivante
+\begin{eqnarray}
+	\delta[n]=
+	\begin{cases}
+		1&n=0\\
+		0&n\neq0
+	\end{cases}
+\end{eqnarray}
+\subsection{Propriétés}
+\begin{eqnarray}
+	\sum_{j=-\infty}^{\infty}\delta_{i,j}a_i=a_i
+\end{eqnarray}
+\end{document}
